@@ -1,0 +1,141 @@
+select customers.customerName,orders.orderNumber
+from customers
+join orders on customers.customerNumber=orders.customerNumber;
+
+
+select customers.customerName,orders.orderNumber
+from customers
+left join orders on customers.customerNumber=orders.customerNumber;
+
+select customers.customerName,orders.orderNumber
+from customers
+left join orders on customers.customerNumber=orders.customerNumber
+where orders.orderNumber is NULL;
+
+SELECT 
+    customerName,
+    (SELECT COUNT(*) 
+     FROM orders o 
+     WHERE o.customerNumber = c.customerNumber) AS total_orders
+FROM customers c;
+
+SELECT 
+    c.customerName, 
+    COUNT(o.orderNumber) AS total_orders
+FROM customers c
+LEFT JOIN orders o ON c.customerNumber = o.customerNumber
+GROUP BY c.customerName;
+
+
+SELECT 
+    customerName,
+    creditLimit,
+    ROW_NUMBER() OVER (ORDER BY creditLimit DESC) AS row_num
+FROM customers;
+
+select customerName,creditLimit
+from customers
+where creditlimit >(select avg(creditlimit) from customers);
+
+select * from payments;
+select * from customers;
+
+SELECT 
+    customerName,
+    (SELECT sum(amount)
+     FROM payments p
+     WHERE p.customerNumber = c.customerNumber) AS total_amount
+FROM customers c;
+
+select customerName,creditLimit
+from customers 
+order by creditLimit desc
+limit 3;
+
+
+select orderNumber,sum((quantityOrdered)*(priceEach)) as Total from orderdetails
+group by orderNumber;
+
+
+select * from customers;
+select * from orders;
+
+select customerName,
+creditLimit,
+Country,
+RANK() OVER (partition by Country ORDER BY creditLimit DESC) AS rank_val
+FROM customers;
+
+select customerNumber,count(orderNumber) as TotalCount from orders 
+group by customerNumber
+having count(orderNumber)>(SELECT AVG(order_counts) 
+    FROM (
+        SELECT COUNT(orderNumber) AS order_counts 
+        FROM orders 
+        GROUP BY customerNumber
+    ) AS subquery);
+
+
+SELECT c.customerName, COUNT(o.orderNumber) AS TotalCount
+FROM customers c
+JOIN orders o ON c.customerNumber = o.customerNumber
+GROUP BY c.customerName
+HAVING COUNT(o.orderNumber) > (
+    SELECT AVG(order_counts) 
+    FROM (
+        SELECT COUNT(orderNumber) AS order_counts 
+        FROM orders 
+        GROUP BY customerNumber
+    ) AS subquery
+);
+select avg(order_counts)from (SELECT customerNumber,COUNT(orderNumber) AS order_counts 
+        FROM orders
+        group by customerNumber)as sub;
+        
+SELECT c.customerName, o.orderNumber, p.productName
+FROM customers c
+JOIN orders o ON c.customerNumber = o.customerNumber
+JOIN orderdetails od ON o.orderNumber = od.orderNumber
+JOIN products p ON od.productCode = p.productCode ;
+
+
+select * from products p
+left join orderdetails od on p.productCode=od.productCode
+where od.productCode is null;
+
+select * from (select creditLimit,
+rank() over (order by creditlimit desc) as ra
+from customers)as sub where ra=2;
+
+
+select * from (select customerName, creditLimit,country,
+dense_rank() over (partition by country order by creditlimit desc) as ra
+from customers ) as sub 
+ where ra<=2
+ order by country;
+
+select customerNumber,count(*) as order_count from orders
+group by customerNumber ;
+
+select p.customerNumber,sum(amount)
+from payments p 
+join customers c on c.customerNumber=p.customerNumber
+group by customerNumber;
+
+select country,avg(creditlimit) as Average
+from customers
+group by country;
+
+select productCode, count(productCode) as total_quantity 
+from orderdetails
+group by productCode;
+
+select officeCode,count(employeeNumber) 
+from employees
+group by officeCode;
+
+select o.postalCode,o.officeCode, count(e.employeeNumber) from offices o
+join employees e on e.officeCode=o.officeCode
+group by e.officeCode;
+----------------
+
