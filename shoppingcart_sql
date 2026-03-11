@@ -1,0 +1,24 @@
+CREATE DATABASE grocery_shop;
+
+USE grocery_shop;
+
+CREATE TABLE products (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    price INT,
+    stock INT
+);
+
+INSERT INTO products (name, price, stock) VALUES
+('Bread', 40, 10),
+('Milk', 60, 5),
+('Eggs', 120, 0),
+('Butter', 50, 8);
+
+CREATE TABLE orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_name VARCHAR(100),
+    item_name VARCHAR(100),
+    quantity INT,
+    total INT
+);
